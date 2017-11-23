@@ -6,11 +6,15 @@ echo "Bienvenue dans l application BashVagrant"
 "Vous pouvez quitter a tout moment en tapant exit"
 read -p "Voulez-vous continuer ? [Y/N] " first
 	if  [ "$first" = "Y" ] || [ "$first" = "y" ] || "$first" = "yes" ];then
-		$(dpkg-query -W -f='${Status}' virtualbox-qt 2>/dev/null | grep -c "ok installed")
-		if [ $(dpkg-query -W -f='${Status}' virtualbox-qt 2>/dev/null | grep -c "ok installed") -eq 0];then
-			echo "Installation de VirtuaBox qt"
-			apt-get install virtualbox-qt
+		$(dpkg-query -W -f='${Status}' virtualbox 2>/dev/null | grep -c "ok installed")
+		if [ $(dpkg-query -W -f='${Status}' virtualbox 2>/dev/null | grep -c "ok installed") -eq 0];then
+			echo "Installation de VirtuaBox"
+			apt-get install virtualbox
 		fi
+                $(dpkg-query -W -f='${Status}' vagrant 2>/dev/null | grep -c "ok installed")
+                if [ $(dpkg-query -W -f='${Status}' vagrant 2>/dev/null | grep -c "ok installed") -eq 0];then
+                        echo "Installation de VirtuaBox"
+                        apt-get install vagrant
 		vagrant init
 		read -p "Choisissez votre box '\n' 
 		[1 = ubuntu/xenial64] '\n'
@@ -40,7 +44,16 @@ read -p "Voulez-vous continuer ? [Y/N] " first
         		read -p "Cette option n'est pas disponible, veuillez taper Y ou N" box
     		fi
 		vagrant up
-		vagrant ssh
+		read -p "Lancer la connexion SSH ? [Y/N] " ssh
+		if [ "$ssh" = "y" ] || [ "$ssh" = "Y" ] || [ "$ssh" = "yes" ];then
+			vagrant ssh
+		elif [ "$ssh" = "exit" ];then
+		$menu="exit"
+		fi
+		read -p "Appuyer sur une touche pour afficher la/les machine(s) virtuelle(s) existante(s)" mv
+		vagrant status
+		read -p "Appuyer sur une touche pour quitter l'installation" quit
+		exit 0 
 	elif [ "$first" = "N" ] || [ "$first" = "n" ] || [ "$first" = "no" ] || [ "$first" = "exit" ];then
 	$menu="exit"
 	fi
